@@ -1,6 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import { errorHandler } from "./shared/error.middleware";
+import authRoutes from "./modules/auth/auth.routes"
+
 
 const app = express();
 
@@ -19,6 +21,10 @@ app.get("/health", (_req, res) => {
     db: dbConnected ? "connected" : "disconnected",
   });
 });
+
+
+
+app.use("/api/auth", authRoutes)
 
 app.use((req, res) => {
   res.status(404).json({
