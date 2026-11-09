@@ -2,10 +2,11 @@ import express from "express";
 import mongoose from "mongoose";
 import { errorHandler } from "./shared/error.middleware";
 import authRoutes from "./modules/auth/auth.routes"
+import cookieParser from "cookie-parser"
 
 
 const app = express();
-
+app.use(cookieParser())
 app.disable("x-powered-by");
 app.use(express.json({ limit: "10kb" }));
 

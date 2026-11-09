@@ -2,6 +2,8 @@ import userModel, { UserDocument } from "../user/user.model"
 import { AppError, isDuplicateKeyError } from "../../shared/errors"
 import type { LoginInput, RegisterInput } from "./auth.schema"
 import { signToken } from "./token"
+import tokenBlackListModel from "./blacklist.model"
+import { hashToken } from "./token"
 
 function toPublicUser(user: UserDocument) {
     return { _id: user._id, email: user.email, name: user.name }
@@ -26,4 +28,13 @@ export async function loginUser({ email, password }: LoginInput) {
     }
 
     return { user: toPublicUser(user), token: signToken(user._id.toString()) }
+}
+
+
+export async function logoutUser(token: string): Promise<void> {
+    await tokenBlackListModel.updateOne(
+        { tokenHash: hashToken(token) },
+        { $setOnInsert: { tokenHash: hashToken(token) } },
+        { upsert: true },
+    )
 }
